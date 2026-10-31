@@ -1,0 +1,23 @@
+{
+  "$schema":"https://openapi.vercel.sh/vercel.json",
+  "framework":"vite",
+  "buildCommand":"npm run build",
+  "outputDirectory":"dist/client",
+  "regions":["gru1"],
+  "functions":{"api/gateway.ts":{"includeFiles":"server/app-shell.html","maxDuration":30}},
+  "rewrites":[
+    {"source":"/","destination":"/api/gateway?route=home"},
+    {"source":"/estoque","destination":"/api/gateway?route=stock"},
+    {"source":"/privacidade","destination":"/api/gateway?route=privacy"},
+    {"source":"/motos/:slug","destination":"/api/gateway?route=bike&slug=:slug"},
+    {"source":"/admin","destination":"/api/gateway?route=admin"},
+    {"source":"/admin/:path*","destination":"/api/gateway?route=admin"},
+    {"source":"/api/site","destination":"/api/gateway?route=site"},
+    {"source":"/api/interest","destination":"/api/gateway?route=interest"},
+    {"source":"/api/admin/:path*","destination":"/api/gateway?route=forbidden"},
+    {"source":"/media/:file","destination":"/api/gateway?route=media&file=:file"},
+    {"source":"/robots.txt","destination":"/api/gateway?route=robots"},
+    {"source":"/sitemap.xml","destination":"/api/gateway?route=sitemap"}
+  ],
+  "headers":[{"source":"/(.*)","headers":[{"key":"X-Content-Type-Options","value":"nosniff"},{"key":"Referrer-Policy","value":"strict-origin-when-cross-origin"}]}]
+}

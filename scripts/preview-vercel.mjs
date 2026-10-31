@@ -1,0 +1,10 @@
+import {spawnSync} from 'node:child_process';
+import {createInterface} from 'node:readline';
+import {createServer} from 'node:http';
+import {readFile,stat} from 'node:fs/promises';
+import {resolve,extname} from 'node:path';
+import {build} from 'esbuild';
+spawnSync('stty',['-echo'],{stdio:['inherit','ignore','ignore']});process.stdout.write('Ready for backend configuration JSON (input hidden).\n');const reader=createInterface({input:process.stdin});let input='';for await(const line of reader){input=line;break}reader.close();const config=JSON.parse(input);process.env.SITE_BACKEND_ORIGIN=config.origin;process.env.SITE_BACKEND_TOKEN=config.token;
+await build({entryPoints:['api/gateway.ts'],outfile:'/tmp/vr-gateway-preview.mjs',bundle:true,platform:'node',format:'esm'});const handler=(await import('/tmp/vr-gateway-preview.mjs')).default;
+const root=resolve('dist/client');const mime={'.js':'text/javascript','.css':'text/css','.jpg':'image/jpeg','.svg':'image/svg+xml','.ttf':'font/ttf'};
+createServer(async(req,res)=>{const url=new URL(req.url,'http://127.0.0.1:8790');const path=url.pathname;let query='';if(path==='/')query='route=home';if(path==='/estoque')query='route=stock';if(path==='/privacidade')query='route=privacy';if(path.startsWith('/motos/'))query='route=bike&slug='+encodeURIComponent(path.slice(7));if(path==='/api/site')query='route=site';if(path==='/api/interest')query='route=interest';if(path==='/admin')query='route=admin';if(path.startsWith('/api/admin/'))query='route=forbidden';if(path.startsWith('/media/'))query='route=media&file='+encodeURIComponent(path.slice(7));if(path==='/robots.txt')query='route=robots';if(path==='/sitemap.xml')query='route=sitemap';if(query){req.url='/api/gateway?'+query;await handler(req,res);return}const file=resolve(root,'.'+path);try{if(!file.startsWith(root+'/')||!(await stat(file)).isFile())throw new Error('Missing');res.setHeader('Content-Type',mime[extname(file)]||'application/octet-stream');res.end(await readFile(file))}catch{res.statusCode=404;res.end('Not found')}}).listen(8790,'127.0.0.1',()=>console.log('Ready on http://127.0.0.1:8790'));

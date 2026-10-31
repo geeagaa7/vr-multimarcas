@@ -1,0 +1,38 @@
+{
+  "name": "vr-multimarcas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "tsc --noEmit && vite build && node scripts/build-vercel.mjs",
+    "db:generate": "drizzle-kit generate",
+    "test": "node --test tests/vercel.test.mjs",
+    "build:sites": "tsc --noEmit && vite build && node scripts/build-worker.mjs",
+    "test:sites": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.0",
+    "lucide-react": "^0.468.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@cloudflare/workers-types": "4.20260515.1",
+    "@vitejs/plugin-react": "^4.7.0",
+    "vite": "^6.3.6",
+    "typescript": "^5.9.3",
+    "tailwindcss": "^4.1.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "esbuild": "^0.25.0",
+    "wrangler": "4.92.0",
+    "drizzle-orm": "^0.44.0",
+    "drizzle-kit": "^0.31.0",
+    "@types/node": "^22.19.0"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

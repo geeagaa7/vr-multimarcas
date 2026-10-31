@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.wrangler/
+.env*
+.dev.vars*
+outputs/
+*.log
+
+.vercel/
+server/app-shell.html
+
+!.env.example
